@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Winner {
+  player1
+  player2
+  draw
+}
+
+model GameSession {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  player1    String
+  player2    String
+  rounds     Round[]
+  createdAt  DateTime   @default(now())
+  endedAt    DateTime?
+
+  @@index([player1, player2])
+  @@index([createdAt])
+}
+
+model Round {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId    String       @db.ObjectId
+  gameSession  GameSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  winner       Winner
+  roundNumber  Int
+  createdAt    DateTime     @default(now())
+
+  @@index([sessionId])
+  @@index([createdAt])
+}
