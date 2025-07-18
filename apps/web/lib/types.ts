@@ -9,7 +9,7 @@ export type GameSession = {
 
 export type Round = {
   id: string;
-  winner: "PLAYER1" | "PLAYER2" | "DRAW";
+  winner: string;
   roundNumber: number;
   createdAt: string;
 };

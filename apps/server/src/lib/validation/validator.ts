@@ -42,8 +42,8 @@ export function createValidator<T extends ZodSchema>(
           break;
         case "bodyAndParams":
           dataToValidate = {
-            body: req.body,
-            params: req.params,
+            ...req.body,
+            ...req.params,
           };
           break;
         case "all":

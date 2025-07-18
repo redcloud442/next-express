@@ -23,7 +23,7 @@ const StartGameButton = () => {
       player2: "",
     },
   });
-  console.log(form.formState.errors);
+
   const router = useRouter();
   const key = GameSessionKey();
 

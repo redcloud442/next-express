@@ -13,12 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Winner {
-  player1
-  player2
-  draw
-}
-
 enum GameStatus {
   active
   ended
@@ -41,7 +35,7 @@ model Round {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
   sessionId    String       @db.ObjectId
   gameSession  GameSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  winner       Winner
+  winner       String
   roundNumber  Int
   createdAt    DateTime     @default(now())
 

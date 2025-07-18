@@ -32,7 +32,13 @@ export const getSpecificGameSession = async (gameid: string) => {
     throw new Error("Failed to get game session");
   }
 
-  return res.data as GameSession;
+  return res.data as {
+    data: GameSession;
+    player1Wins: number;
+    player2Wins: number;
+    draws: number;
+    roundNumber: number;
+  };
 };
 
 export const endGameSession = async (gameid: string) => {
@@ -45,7 +51,7 @@ export const endGameSession = async (gameid: string) => {
   return res.data as GameSession;
 };
 
-export const createGameRound = async (gameid: string, winner: "PLAYER1" | "PLAYER2" | "DRAW") => {
+export const createGameRound = async (gameid: string, winner: string) => {
   const res = await api.post(`/game/${gameid}/round`, { winner });
 
   if (res.status !== 200) {
