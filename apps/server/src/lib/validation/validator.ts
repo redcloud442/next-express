@@ -24,7 +24,7 @@ export interface ValidationErrorResponse {
  */
 export function createValidator<T extends ZodSchema>(
   schema: T,
-  validateTarget: "body" | "query" | "params" | "all" = "body",
+  validateTarget: "body" | "query" | "params" | "all" | "bodyAndParams" = "body",
 ) {
   return (req: ValidatedRequest, res: Response<ValidationErrorResponse>, next: NextFunction) => {
     try {
@@ -39,6 +39,12 @@ export function createValidator<T extends ZodSchema>(
           break;
         case "params":
           dataToValidate = req.params;
+          break;
+        case "bodyAndParams":
+          dataToValidate = {
+            body: req.body,
+            params: req.params,
+          };
           break;
         case "all":
           dataToValidate = {

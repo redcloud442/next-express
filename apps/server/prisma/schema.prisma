@@ -19,8 +19,14 @@ enum Winner {
   draw
 }
 
+enum GameStatus {
+  active
+  ended
+}
+
 model GameSession {
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  game_status GameStatus @default(active)
   player1    String
   player2    String
   rounds     Round[]

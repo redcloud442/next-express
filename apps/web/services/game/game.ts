@@ -1,5 +1,5 @@
 import { CreateGameSessionType } from "@/lib/schema";
-import { GameSession } from "@/lib/types";
+import { GameSession, Round } from "@/lib/types";
 import { api } from "../axios";
 
 export const createGameSession = async (data: CreateGameSessionType) => {
@@ -23,4 +23,34 @@ export const getGameSessions = async (limit: number, page: number) => {
     data: GameSession[];
     total: number;
   };
+};
+
+export const getSpecificGameSession = async (gameid: string) => {
+  const res = await api.get(`/game/${gameid}`);
+
+  if (res.status !== 200) {
+    throw new Error("Failed to get game session");
+  }
+
+  return res.data as GameSession;
+};
+
+export const endGameSession = async (gameid: string) => {
+  const res = await api.patch(`/game/${gameid}/end`);
+
+  if (res.status !== 200) {
+    throw new Error("Failed to end game session");
+  }
+
+  return res.data as GameSession;
+};
+
+export const createGameRound = async (gameid: string, winner: "PLAYER1" | "PLAYER2" | "DRAW") => {
+  const res = await api.post(`/game/${gameid}/round`, { winner });
+
+  if (res.status !== 200) {
+    throw new Error("Failed to create game round");
+  }
+
+  return res.data as Round;
 };

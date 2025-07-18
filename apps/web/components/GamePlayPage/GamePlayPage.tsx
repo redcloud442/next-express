@@ -1,12 +1,15 @@
 "use client";
 
 import { emptyBoard } from "@/lib/constant";
-import { Cell, GameSession } from "@/lib/types";
+import { Cell } from "@/lib/types";
+import { GameSessionKeyWithId, useFetchGameSession } from "@/query/game/game.query";
+import { createGameRound, endGameSession } from "@/services/game/game";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@workspace/ui/components/dialog";
 import { cn } from "@workspace/ui/lib/utils";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type GamePlayPageProps = {
   params: {
@@ -16,24 +19,16 @@ type GamePlayPageProps = {
 
 const GamePlayPage = ({ params }: GamePlayPageProps) => {
   const { gameid } = params;
-  const router = useRouter();
 
-  const [session, setSession] = useState<GameSession | null>(null);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   const [board, setBoard] = useState<Cell[][]>(structuredClone(emptyBoard));
   const [turn, setTurn] = useState<"X" | "O">("X");
   const [winner, setWinner] = useState<"PLAYER1" | "PLAYER2" | "DRAW" | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Fetch session
-  const fetchSession = async () => {
-    const res = await fetch(`/api/game-sessions/${gameid}`);
-    const data = await res.json();
-    setSession(data);
-  };
-
-  useEffect(() => {
-    fetchSession();
-  }, []);
+  const { data: session } = useFetchGameSession(GameSessionKeyWithId(gameid), { gameid });
 
   // Handle move
   const handleClick = (row: number, col: number) => {
@@ -76,14 +71,20 @@ const GamePlayPage = ({ params }: GamePlayPageProps) => {
   };
 
   // Submit round
+
+  const mutation = useMutation({
+    mutationFn: (winner: "PLAYER1" | "PLAYER2" | "DRAW") => createGameRound(gameid, winner),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: GameSessionKeyWithId(gameid) });
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   const submitRound = async () => {
     if (!winner) return;
-    await fetch(`/api/game-sessions/${gameid}/rounds`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ winner }),
-    });
-    await fetchSession();
+    mutation.mutate(winner);
   };
 
   // Continue to next round
@@ -96,7 +97,7 @@ const GamePlayPage = ({ params }: GamePlayPageProps) => {
 
   // Stop and end session
   const handleStop = async () => {
-    await fetch(`/api/game-sessions/${gameid}/end`, { method: "PATCH" });
+    await endGameSession(gameid);
     router.push("/");
   };
 
