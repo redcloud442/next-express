@@ -24,14 +24,13 @@
   "engines": {
     "node": ">=20"
   },
-
   "pnpm": {
     "allowedBuildDependencies": [
       "@prisma/client",
       "prisma",
       "@prisma/engines",
-      "sharp",
-      "esbuild"
+      "esbuild",
+      "sharp"
     ]
   }
 }
