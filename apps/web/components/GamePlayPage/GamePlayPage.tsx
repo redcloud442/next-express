@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Separator } from "@workspace/ui/components/separator";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { cn } from "@workspace/ui/lib/utils";
-import { ArrowLeft, Circle, Crown, Play, Square, StopCircle, Target, Trophy, Users } from "lucide-react";
+import { ArrowLeft, Circle, Crown, Play, StopCircle, Target, Trophy, Users, XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -158,7 +158,7 @@ const GamePlayPage = ({ params }: GamePlayPageProps) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-100 rounded-lg">
-                    <Square className="w-5 h-5 text-blue-600" />
+                    <XIcon className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">{session.data.player1} (X)</p>
