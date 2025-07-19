@@ -1,9 +1,0 @@
-node_modules
-.pnpm-store
-dist
-.next
-.turbo
-.vscode
-*.log
-.DS_Store
-.env
